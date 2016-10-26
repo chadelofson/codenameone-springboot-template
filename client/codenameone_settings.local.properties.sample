@@ -1,0 +1,9 @@
+codename1.android.keystoreAlias=youralias
+codename1.android.keystorePassword=yourpassword
+codename1.android.keystore=/path/to/keystore
+codename1.ios.release.certificate=/Users/shannah/weblite/yanko/ios_distribution.p12
+codename1.ios.debug.certificate=/Users/shannah/weblite/yanko/ios_development.p12
+codename1.ios.debug.provision=/Users/shannah/weblite/yanko/pander_mobile_app_development.mobileprovision
+codename1.ios.release.certificatePassword=password
+codename1.ios.debug.certificatePassword=password
+codename1.ios.release.provision=/Users/shannah/weblite/yanko/pander_mobile_app_distribution.mobileprovision

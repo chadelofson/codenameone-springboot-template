@@ -1,0 +1,14 @@
+*.jar
+CodenameOne_SRC.zip
+build
+dist
+Mappers.mirah
+FirstCodenameOneLibrary.java
+!DataMapperANTTasks.jar
+!maven-ant-tasks-2.1.3.jar
+mappers/src/theme.res
+*.class
+!CN1MirahJSON-macros.jar
+!mirah.jar
+!mirahc.jar
+!MirahAnt.jar

@@ -1,0 +1,3 @@
+base.package.name=com.example
+artifact.prefix=com-example-app
+base.package.path=com/example

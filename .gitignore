@@ -1,0 +1,13 @@
+build
+dist
+private
+lib/impl
+**/*.jar
+**/*.class
+**/*.mirah
+mappers.cn1lib
+com-example-app-shared.cn1lib
+client/lib/impl
+runtime.override.properties
+config.properties
+config.done.properties

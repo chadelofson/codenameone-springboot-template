@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="CodenameOneSpringTemplate" default="configure" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+   <!-- Override these properties in your ../config.properties file -->
+  <description>Codename One Spring Template Build Tasks</description>
+  
+  <path id="maven-ant-tasks.classpath" path="shared/lib/maven-ant-tasks-2.1.3.jar" />
+    <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
+             uri="antlib:org.apache.maven.artifact.ant"
+             classpathref="maven-ant-tasks.classpath" />
+             
+     
+  <target name="check-configured">
+    <available file=".configured" property="configured.present"/>
+  </target> 
+          
+  <target name="configure" description="Download dependencies" depends="check-configured" unless="configured.present">
+        <get src="https://github.com/shannah/cn1make/raw/master/configure.xml" dest="client/configure.xml" skipexisting="true"/>
+        <ant inheritall="false" dir="client" antfile="configure.xml"/>
+        <delete file="client/configure.xml"/>
+        
+        <get src="https://github.com/shannah/cn1make/raw/master/configure.xml" dest="shared/mappers/configure.xml" skipexisting="true"/>
+        <ant inheritall="false" dir="shared/mappers" antfile="configure.xml"/>
+        <delete file="shared/mappers/configure.xml"/>
+        
+        <get src="https://github.com/shannah/cn1make/raw/master/configure.xml" dest="shared/configure.xml" skipexisting="true"/>
+        <ant inheritall="false" dir="shared" antfile="configure.xml"/>
+        <delete file="shared/configure.xml"/>
+        
+        <copy file="shared/mappers/lib/CodenameOne.jar" tofile="shared/lib/CodenameOne.jar"/>
+        <copy file="shared/mappers/lib/CLDC11.jar" tofile="shared/lib/CLDC11.jar"/>
+        <copy file="shared/mappers/CodeNameOneBuildClient.jar" tofile="shared/CodeNameOneBuildClient.jar"/>
+
+        
+  </target>
+  <target name="install-shared" depends="configure" description="Build the shared library and install in both client and server projects.">
+    <ant inheritall="false" dir="shared" target="install"/>
+  </target>
+  
+  <target name="run-production-simulator" description="Runs mobile app in simulator against production server">
+    <copy file="client/runtime.production.properties" tofile="client/src/runtime.override.properties"/>
+    <ant dir="client" target="run" inheritall="false"/>
+    <delete file="client/src/runtime.override.properties"/>
+  </target>
+  <target name="run-local-simulator" description="Runs mobile app in simulator against local server">
+    <copy file="client/runtime.local.properties" tofile="client/src/runtime.override.properties"/>
+    <ant dir="client" target="run" inheritall="false"/>
+    <delete file="client/src/runtime.override.properties"/>
+  </target>
+  <target name="build-production-android" description="Builds APK that runs against the production server">
+    <copy file="client/runtime.production.properties" tofile="client/src/runtime.override.properties"/>
+    <ant dir="client" target="build-for-android-device" inheritall="false"/>
+    <delete file="client/src/runtime.override.properties"/>
+  </target>
+  <target name="build-production-ios" description="Builds iOS app that runs against the production server">
+    <copy file="client/runtime.production.properties" tofile="client/src/runtime.override.properties"/>
+    <ant dir="client" target="build-for-ios-device-release" inheritall="false"/>
+    <delete file="client/src/runtime.override.properties"/>
+  </target>
+  
+  <target name="build-local-android" description="Builds APK that runs against local server">
+    <copy file="client/runtime.local.properties" tofile="client/src/runtime.override.properties"/>
+    <ant dir="client" target="build-for-android-device" inheritall="false"/>
+    <delete file="client/src/runtime.override.properties"/>
+  </target>
+  
+  <target name="build-local-ios" description="Builds iOS app that runs against local server">
+    <copy file="client/runtime.local.properties" tofile="client/src/runtime.override.properties"/>
+    <ant dir="client" target="build-for-ios-device" inheritall="false"/>
+    <delete file="client/src/runtime.override.properties"/>
+  </target>
+  
+  <target name="build-local-webservice" description="Build the web service on your local machine.">
+    <copy file="server/runtime.local.properties" tofile="server/src/main/resources/runtime.override.properties"/>
+    <exec executable="mvn" dir="server">
+        <arg value="install"/>
+    </exec>
+  </target>
+  
+  <target name="build-production-webservice" description="Build the web service for the production deployment">
+    <copy file="server/runtime.production.properties" tofile="server/src/main/resources/runtime.override.properties"/>
+    <exec executable="mvn" dir="server">
+        <arg value="install"/>
+    </exec>
+    <copy file="server/runtime.local.properties" tofile="server/src/main/resources/runtime.override.properties"/>
+  </target>
+  <target name="clean" description="Clean all targets">
+    <ant dir="shared" inheritall="false" target="clean"/>
+    <ant dir="client" inheritall="false" target="clean"/>
+    <artifact:mvn pom="server/pom.xml">
+        <arg value="clean"/>
+      </artifact:mvn>
+  </target>
+  
+  <target name="setup" description="Set up the template">
+      <fail message="Please copy config.properties.sample to config.properties modify to suit your app.">
+          <condition>
+              <not>
+                  <available file="config.properties" />
+              </not>
+          </condition>
+      </fail>
+      <fail message="Setup has already been run.">
+          <condition>
+              <available file="config.done.properties" />
+          </condition>
+      </fail>
+      <property file="config.properties"/>
+      
+      <replace dir="shared" token="com.example" value="${base.package.name}"/>
+      <replace dir="client" token="com.example" value="${base.package.name}"/>
+      <replace dir="server" token="com.example" value="${base.package.name}"/>
+      
+      <replace dir="shared" token="com/example" value="${base.package.path}"/>
+      <replace dir="client" token="com/example" value="${base.package.path}"/>
+      <replace dir="server" token="com/example" value="${base.package.path}"/>
+      
+      <replace dir="shared" token="com-example-app" value="${artifact.prefix}"/>
+      <replace dir="client" token="com-example-app" value="${artifact.prefix}"/>
+      <replace dir="server" token="com-example-app" value="${artifact.prefix}"/>
+      
+      <move file="client/src/com/example" tofile="client/src/${base.package.path}"/>
+      <move file="server/src/main/java/com/example" tofile="server/src/main/java/${base.package.path}"/>
+      <move file="shared/src/com/example" tofile="shared/src/${base.package.path}"/>
+      
+      <copy file="config.properties" tofile="config.done.properties"/>
+  </target>
+</project>

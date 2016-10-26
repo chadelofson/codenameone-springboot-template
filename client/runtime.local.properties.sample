@@ -1,0 +1,3 @@
+BASE_URL=http://localhost:8080/com-example-app
+GOOGLE_PROJECT=xxx
+PUSH_TOKEN=xxx

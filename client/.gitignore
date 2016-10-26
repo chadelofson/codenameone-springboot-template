@@ -1,0 +1,11 @@
+*.jar
+CodenameOne_SRC.zip
+build
+dist
+!generate-mappers.jar
+!maven-ant-tasks-2.1.3.jar
+!cn1css-ant-task.jar
+.cn1_css_checksums
+runtime.local.properties
+codenameone_settings.local.properties
+runtime.override.properties
